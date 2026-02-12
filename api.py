@@ -2,6 +2,7 @@ import asyncio
 import logging
 import time
 from enum import Enum
+from http.client import HTTPException, responses
 
 import aiohttp
 
@@ -32,7 +33,6 @@ class MaxApi:
     __base_url = "https://platform-api.max.ru/"
 
     def __init__(self, token: str, proxy: str = None):
-        self._lgr = logging.getLogger(__name__)
         self.token = token
         self.proxy = proxy
 
@@ -84,13 +84,11 @@ class MaxApi:
             "headers": self.headers,
             "proxy": self.proxy,
         }
-        try:
-            async with HTTPMethod.get_session_method(self.session, http_method)(**params) as response:
-                response = await response.json()
-        except Exception as e:
-            self._lgr.error(e)
-            return dict()
-        return response
+        async with HTTPMethod.get_session_method(self.session, http_method)(**params) as response:
+            data = await response.json()
+        if response.status != 200:
+            raise HTTPException(f"[{response.status}] {data.get('code')}. Message: {data.get('message')}")
+        return data
 
     async def close(self):
         await self.session.close()

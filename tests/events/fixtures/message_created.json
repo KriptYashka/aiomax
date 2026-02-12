@@ -1,0 +1,75 @@
+{
+    "update_type": "message_created",
+    "timestamp": 0,
+    "message": {
+        "sender": {
+            "user_id": 0,
+            "first_name": "string",
+            "last_name": "string",
+            "username": "string",
+            "is_bot": true,
+            "last_activity_time": 0,
+            "name": "string"
+        },
+        "recipient": {
+            "chat_id": 0,
+            "chat_type": "chat",
+            "user_id": 0
+        },
+        "timestamp": 0,
+        "link": {
+            "type": "forward",
+            "sender": {
+                "user_id": 0,
+                "first_name": "string",
+                "last_name": "string",
+                "username": "string",
+                "is_bot": true,
+                "last_activity_time": 0,
+                "name": "string"
+            },
+            "chat_id": 0,
+            "message": {
+                "mid": "string",
+                "seq": 0,
+                "text": "string",
+                "attachments": [{
+                    "type": "image",
+                    "payload": {
+                        "photo_id": 0,
+                        "token": "string",
+                        "url": "string"
+                    }
+                }],
+                "markup": [{
+                    "type": "strong",
+                    "from": 0,
+                    "length": 0
+                }]
+            }
+        },
+        "body": {
+            "mid": "string",
+            "seq": 0,
+            "text": "string",
+            "attachments": [{
+                "type": "image",
+                "payload": {
+                    "photo_id": 0,
+                    "token": "string",
+                    "url": "string"
+                }
+            }],
+            "markup": [{
+                "type": "strong",
+                "from": 0,
+                "length": 0
+            }]
+        },
+        "stat": {
+            "views": 0
+        },
+        "url": "string"
+    },
+    "user_locale": "string"
+}
