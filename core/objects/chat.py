@@ -8,7 +8,7 @@ from core.objects import Message
 
 class ChatTypes(Enum):
     CHAT = "chat"
-    DIALOG = "dialog"  # TODO: Надо проверить эмпирическим путём, что есть
+    DIALOG = "dialog"  # TODO: Надо проверить эмпирическим путём, что оно существует
 
 
 class ChatStatus(Enum):

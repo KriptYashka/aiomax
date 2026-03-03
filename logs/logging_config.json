@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "simple": {
+      "format": "%(asctime)s - %(name)s-16.16s - %(levelname)s-7s - %(message)s"
+    },
+    "detailed": {
+      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d"
+    }
+  },
+  "handlers": {
+    "console": {
+      "class": "logging.StreamHandler",
+      "level": "DEBUG",
+      "formatter": "simple",
+      "stream": "ext://sys.stdout"
+    },
+    "file": {
+      "class": "logging.FileHandler",
+      "level": "INFO",
+      "formatter": "detailed",
+      "filename": "logs/app.log",
+      "mode": "a",
+      "encoding": "utf-8"
+    }
+  },
+  "loggers": {
+    "aiomax": {
+      "level": "DEBUG",
+      "handlers": [
+        "console",
+        "file"
+      ],
+      "propagate": false
+    },
+    "aiomax.longpoll": {
+      "level": "INFO",
+      "handlers": [
+        "console",
+        "file"
+      ],
+      "propagate": false
+    }
+  },
+  "root": {
+    "level": "WARNING",
+    "handlers": [
+      "console"
+    ]
+  }
+}
+
+

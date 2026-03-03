@@ -1,24 +1,23 @@
 import asyncio
-import logging
 import os
-from pathlib import Path
 
 from dotenv import load_dotenv
 
 from api import MaxApi
-from core.longpool import MaxLongPoll
+from core.longpoll import MaxLongPoll
+from logs.logger import setup_logging
 
 
 async def main():
-    # logging.basicConfig(filename=Path("logs/config.ini"))
+    setup_logging()
     load_dotenv()
     token = os.getenv("TOKEN")
     proxy = os.getenv("HTTP_PROXY")
 
     api = MaxApi(token, proxy)
-    longpool = MaxLongPoll(api)
+    longpoll = MaxLongPoll(api)
 
-    await longpool.run()
+    await longpoll.run()
 
 
 if __name__ == "__main__":

@@ -1,11 +1,13 @@
 import asyncio
-import logging
-from http.client import HTTPException
 from typing import Optional, Union
+
+from aiohttp.web_exceptions import HTTPException
 
 from api import MaxApi
 from core.events.base import EventTypes as Types, Event
 from core.events.message import EventMessageCreated, EventMessageCallback, EventMessageEdited, EventMessageRemoved
+from core.exceptions.common import HTTPExceptionController
+from logs.logger import logger
 
 
 class MaxLongPoll(object):
@@ -37,7 +39,7 @@ class MaxLongPoll(object):
             marker: Optional[int] = None,
             types: Union[list, str, None] = None,
     ):
-        self._lgr = logging.getLogger(__name__)
+        self._lgr = logger.getChild('longpoll')
         self.api = api
         self.params = {
             'limit': limit,
@@ -64,16 +66,22 @@ class MaxLongPoll(object):
         return events
 
     async def run(self):
-        self._lgr.info("Long poll started")
+        self._lgr.info("Longpoll started")
         while self.working:
             try:
                 response = await self.get_events()
-                print(response)
+                # TODO: Отправить диспетчеру
             except HTTPException as e:
-                self._lgr.error(f"Long poll HTTP error: {e}")
+                self.propagate_exception(e)
             except asyncio.CancelledError:
-                self._lgr.error("Cancelled by user")
+                self._lgr.info("Cancelled by user")
                 self.working = False
             except Exception as e:
-                self._lgr.error(f"Long poll error: {e}")
+                self._lgr.exception(f"Unhandled longpoll error: {e}")
+        await self.api.close()
+        self._lgr.info("Longpoll stopped")
 
+    def propagate_exception(self, exception: HTTPException):
+        if HTTPExceptionController.need_stop_polling(exception):
+            self.working = False
+        HTTPExceptionController.log(self._lgr, exception)

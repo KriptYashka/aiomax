@@ -1,10 +1,11 @@
 import asyncio
-import logging
 import time
 from enum import Enum
-from http.client import HTTPException, responses
 
 import aiohttp
+
+from core.exceptions.common import web_exception_for_status
+from logs.logger import logger
 
 
 class HTTPMethod(Enum):
@@ -46,6 +47,9 @@ class MaxApi:
 
         self.session = aiohttp.ClientSession()
 
+    def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()
+
     async def _delay(self):
         delay_time = max(self.RPS_DELAY - (time.time() - self.last_request_dt), 0)
         if delay_time:
@@ -84,10 +88,14 @@ class MaxApi:
             "headers": self.headers,
             "proxy": self.proxy,
         }
+        logger.debug(f"Request {http_method.name} {url} params={params['data']}")
         async with HTTPMethod.get_session_method(self.session, http_method)(**params) as response:
             data = await response.json()
+        response.close()
         if response.status != 200:
-            raise HTTPException(f"[{response.status}] {data.get('code')}. Message: {data.get('message')}")
+            text = f"[{response.status}] {data.get('code')}. Message: {data.get('message')}"
+            raise web_exception_for_status(response.status, reason=text)
+        logger.debug(f"Response {response.status} from {url}: {data}")
         return data
 
     async def close(self):

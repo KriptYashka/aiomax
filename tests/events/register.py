@@ -9,5 +9,6 @@ def main():
         event = EventMessageCreated.model_validate(data)
         print(event, sep="\n")
 
+
 if __name__ == '__main__':
     main()

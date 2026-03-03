@@ -8,5 +8,6 @@ def main():
     user = User.model_validate(user_json)
     print(user)
 
+
 if __name__ == '__main__':
     main()
