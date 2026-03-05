@@ -3,11 +3,13 @@ from typing import Optional, Union
 
 from aiohttp.web_exceptions import HTTPException
 
-from api import MaxApi
+from core.api import MaxApi
+from core.bot import Bot
 from core.events.base import EventTypes as Types, Event
 from core.events.message import EventMessageCreated, EventMessageCallback, EventMessageEdited, EventMessageRemoved
 from core.exceptions.common import HTTPExceptionController
-from logs.logger import logger
+from core.handlers.router import Router
+from logs.logger import Logger
 
 
 class MaxLongPoll(object):
@@ -33,14 +35,15 @@ class MaxLongPoll(object):
 
     def __init__(
             self,
-            api: MaxApi,
+            bot: Bot,
             limit: int = 100,
             timeout: int = 30,
             marker: Optional[int] = None,
             types: Union[list, str, None] = None,
     ):
-        self._lgr = logger.getChild('longpoll')
-        self.api = api
+        self._lgr = Logger.logger.getChild('longpoll')
+        self.api: MaxApi = bot.api
+        self.bot = bot
         self.params = {
             'limit': limit,
             'timeout': timeout,
@@ -65,14 +68,15 @@ class MaxLongPoll(object):
             events.append(self._parse_event(update))
         return events
 
-    async def run(self):
+    async def run(self, dispatcher: Router):
         self._lgr.info("Longpoll started")
         while self.working:
             try:
-                response = await self.get_events()
-                # TODO: Отправить диспетчеру
+                events = await self.get_events()
+                for event in events:
+                    await dispatcher.propagate_event(event, bot=self.bot)
             except HTTPException as e:
-                self.propagate_exception(e)
+                self.handle_http_exception(e)
             except asyncio.CancelledError:
                 self._lgr.info("Cancelled by user")
                 self.working = False
@@ -81,7 +85,7 @@ class MaxLongPoll(object):
         await self.api.close()
         self._lgr.info("Longpoll stopped")
 
-    def propagate_exception(self, exception: HTTPException):
+    def handle_http_exception(self, exception: HTTPException):
         if HTTPExceptionController.need_stop_polling(exception):
             self.working = False
         HTTPExceptionController.log(self._lgr, exception)

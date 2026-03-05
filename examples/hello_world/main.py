@@ -3,21 +3,22 @@ import os
 
 from dotenv import load_dotenv
 
-from api import MaxApi
+from core.bot import Bot
+from core.handlers.router import Router
 from core.longpoll import MaxLongPoll
-from logs.logger import setup_logging
+
+from dispatcher import dispatcher
 
 
 async def main():
-    setup_logging()
     load_dotenv()
     token = os.getenv("TOKEN")
     proxy = os.getenv("HTTP_PROXY")
 
-    api = MaxApi(token, proxy)
-    longpoll = MaxLongPoll(api)
+    bot = Bot(token, proxy=proxy)
+    longpoll = MaxLongPoll(bot)
 
-    await longpoll.run()
+    await longpoll.run(dispatcher)
 
 
 if __name__ == "__main__":

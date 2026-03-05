@@ -1,13 +1,12 @@
 import asyncio
 import inspect
-
 from dataclasses import dataclass, field
 from functools import partial
 from typing import Any, Callable
 
 from magic_filter import MagicFilter
 
-from c3000web_notificator.bots.core.vk.aiovk.handlers.base_filter import Filter
+from core.handlers.base_filter import Filter
 
 CallbackType = Callable[..., Any]
 

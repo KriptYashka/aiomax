@@ -1,12 +1,13 @@
 import logging
+import sys
 import traceback
 
 from typing import Any, Callable, Optional
 
-from c3000web_notificator.bots.core.vk.aiovk.bot.bot_events import VkBotEvent
-from c3000web_notificator.bots.core.vk.aiovk.handlers.base_filter import Filter
-from c3000web_notificator.bots.core.vk.aiovk.handlers.handler import FilterObject, HandlerObject
-from c3000web_notificator.bots.core.vk.aiovk.handlers.responce import ResponseStatus
+import core.events as types
+from core.handlers.base_filter import Filter
+from core.handlers.handler import FilterObject, HandlerObject
+from core.handlers.responce import ResponseStatus
 
 CallbackType = Callable[..., Any]  # Повторяется 2 раза в проекте
 
@@ -59,10 +60,10 @@ class EventObserver:
 
         return callback
 
-    def check_root_filters(self, event: VkBotEvent, **kwargs: Any) -> Any:
+    def check_root_filters(self, event: types.Event, **kwargs: Any) -> Any:
         return self._handler.check(event, **kwargs)
 
-    async def trigger(self, event: VkBotEvent, *args, **kwargs: Any) -> Optional[int]:
+    async def trigger(self, event: types.Event, *args, **kwargs: Any) -> Optional[int]:
         """
         Передайте событие обработчикам.
         Обработчик будет вызван, когда будут пройдены все его фильтры.

@@ -5,7 +5,7 @@ from enum import Enum
 import aiohttp
 
 from core.exceptions.common import web_exception_for_status
-from logs.logger import logger
+from logs.logger import Logger
 
 
 class HTTPMethod(Enum):
@@ -34,6 +34,7 @@ class MaxApi:
     __base_url = "https://platform-api.max.ru/"
 
     def __init__(self, token: str, proxy: str = None):
+        Logger.setup_logging()
         self.token = token
         self.proxy = proxy
 
@@ -41,7 +42,7 @@ class MaxApi:
         self.last_request_dt = time.time()
 
         self.headers = {
-            "Authorization": self.token + "a",
+            "Authorization": self.token,
             "Content-Type": "application/json",
         }
 
@@ -59,9 +60,9 @@ class MaxApi:
         url = self.__base_url + method
         return await self._send(HTTPMethod.GET, url, params)
 
-    async def post(self, method: str, params: dict = None):
+    async def post(self, method: str, params: dict = None, data: dict = None):
         url = self.__base_url + method
-        return await self._send(HTTPMethod.POST, url, params)
+        return await self._send(HTTPMethod.POST, url, params, data)
 
     async def put(self, method: str, params: dict = None):
         url = self.__base_url + method
@@ -79,24 +80,28 @@ class MaxApi:
             self,
             http_method: HTTPMethod,
             url: str,
-            params: dict = None
+            params: dict = None,
+            data: dict = None,
     ) -> dict:
         await self._delay()
-        params = {
+        cleared_params = dict([(key, value) for key, value in params.items() if value])
+        method_params = {
             "url": url,
-            "data": params,
+            "params": cleared_params,
             "headers": self.headers,
             "proxy": self.proxy,
+            "json": data,
         }
-        logger.debug(f"Request {http_method.name} {url} params={params['data']}")
-        async with HTTPMethod.get_session_method(self.session, http_method)(**params) as response:
-            data = await response.json()
+
+        Logger.logger.debug(f"Request {http_method.name} {url} params={method_params['params']}")
+        async with HTTPMethod.get_session_method(self.session, http_method)(**method_params) as response:
+            content = await response.json()
         response.close()
         if response.status != 200:
-            text = f"[{response.status}] {data.get('code')}. Message: {data.get('message')}"
+            text = f"[{response.status}] {content.get('code')}. Message: {content.get('message')}"
             raise web_exception_for_status(response.status, reason=text)
-        logger.debug(f"Response {response.status} from {url}: {data}")
-        return data
+        Logger.logger.debug(f"Response {response.status} from {url}: {content}")
+        return content
 
     async def close(self):
         await self.session.close()
