@@ -2,7 +2,7 @@ import dataclasses
 import json
 import logging
 
-from keyboards import ButtonType, Button
+from core.keyboards import ButtonType, Button
 
 
 @dataclasses.dataclass
@@ -55,10 +55,10 @@ class Keyboard(object):
         keyboard = {
             "type": "inline_keyboard",
             "payload": {
-                "buttons": self.lines,
+                "buttons": json.loads(json.dumps(self.lines, ensure_ascii=False, cls=ButtonEncoder)),
             }
         }
-        return json.dumps(keyboard, ensure_ascii=False, cls=ButtonEncoder)
+        return keyboard
 
     def _calc_and_get_line(self, new_button: Button):
         if not KeyboardConfig.can_append_on_line(line=self.lines[-1], new_button_type=new_button.type):
