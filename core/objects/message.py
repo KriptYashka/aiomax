@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from core.objects import User, Recipient
 
 
-class AttachmentTypes(Enum):
+class AttachmentTypes(str, Enum):
     IMAGE = "image"
     VIDEO = "video"
     AUDIO = "audio"
