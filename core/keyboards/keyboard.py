@@ -29,9 +29,11 @@ class Keyboard(object):
     Класс для создания клавиатуры для бота (https://dev.max.ru/docs-api#%D0%9A%D0%BB%D0%B0%D0%B2%D0%B8%D0%B0%D1%82%D1%83%D1%80%D0%B0)
     """
 
-    def __init__(self):
+    def __init__(self, buttons: list[list[Button]] = None):
         self.inline = True  # На данный момент доступна только inline-клавиатура
-        self.lines = [[]]
+
+        buttons = buttons or [[]]
+        self.lines = buttons
 
     def _json_lines(self):
         return [

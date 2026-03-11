@@ -1,3 +1,5 @@
+from magic_filter import F
+
 from core.bot import Bot
 from core.events import EventMessageCreated, EventMessageCallback
 from core.handlers.router import Router
@@ -38,10 +40,15 @@ async def handle_menu_callbacks(event: EventMessageCallback, bot: Bot):
     user_id = callback.user.user_id
 
     if payload == "menu_catalog":
-        keyboard = Keyboard()
-        keyboard.add_button(ButtonCallback("💻 Ноутбуки", "catalog_laptops"))
-        keyboard.add_button(ButtonCallback("📱 Смартфоны", "catalog_phones"))
-        keyboard.add_button(ButtonCallback("⬅ Назад", "menu_back"))
+        buttons = [
+            [
+                ButtonCallback("💻 Ноутбуки", "catalog_laptops"),
+                ButtonCallback("📱 Смартфоны", "catalog_phones"),
+                ButtonCallback("⬅ Назад", "menu_back"),
+            ]
+        ]
+        keyboard = Keyboard(buttons)
+
         text = "Каталог товаров:\n\nВыберите категорию:"
 
     elif payload == "menu_cart":
