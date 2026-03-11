@@ -64,17 +64,17 @@ class MaxApi:
         url = self.__base_url + method
         return await self._send(HTTPMethod.POST, url, params, data)
 
-    async def put(self, method: str, params: dict = None):
+    async def put(self, method: str, params: dict = None, data: dict = None):
         url = self.__base_url + method
-        return await self._send(HTTPMethod.PUT, url, params)
+        return await self._send(HTTPMethod.PUT, url, params, data)
 
-    async def patch(self, method: str, params: dict = None):
+    async def patch(self, method: str, params: dict = None, data: dict = None):
         url = self.__base_url + method
-        return await self._send(HTTPMethod.PATCH, url, params)
+        return await self._send(HTTPMethod.PATCH, url, params, data)
 
-    async def delete(self, method: str, params: dict = None):
+    async def delete(self, method: str, params: dict = None, data: dict = None):
         url = self.__base_url + method
-        return await self._send(HTTPMethod.DELETE, url, params)
+        return await self._send(HTTPMethod.DELETE, url, params, data)
 
     async def _send(
             self,

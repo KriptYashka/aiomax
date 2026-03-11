@@ -25,4 +25,4 @@ async def handle_message(event: EventMessageCreated, bot: Bot):
         text=f"Кнопки {n}x{m}",
         attachments=[keyboard.get_keyboard()],
     )
-    await bot.send_model(new_message, user_id=message.sender.user_id)
+    await bot.send(new_message, user_id=message.sender.user_id)
