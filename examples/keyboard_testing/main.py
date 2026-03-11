@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from core.bot import Bot
 from core.longpoll import MaxLongPoll
-from examples.online_shop.dispatcher import dispatcher
+from dispatcher import dispatcher
 
 
 async def main():

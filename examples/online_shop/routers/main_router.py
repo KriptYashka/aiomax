@@ -1,10 +1,7 @@
-from magic_filter import F
-
 from core.bot import Bot
 from core.events import EventMessageCreated, EventMessageCallback
 from core.handlers.router import Router
 from core.keyboards import Keyboard, ButtonCallback
-
 
 router = Router()
 
@@ -95,5 +92,3 @@ async def handle_menu_callbacks(event: EventMessageCallback, bot: Bot):
         [keyboard.get_keyboard()],
         user_id=user_id,
     )
-
-

@@ -4,9 +4,7 @@ import os
 from dotenv import load_dotenv
 
 from core.bot import Bot
-from core.handlers.router import Router
 from core.longpoll import MaxLongPoll
-
 from dispatcher import dispatcher
 
 
